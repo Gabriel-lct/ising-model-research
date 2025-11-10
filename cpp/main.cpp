@@ -2,11 +2,11 @@
 #include "utils.hpp"
 #include <iostream>
 
-int X = 75;
-int Y = 75;
-int J = -1;
-int T = 1;
-int N = 500000;
+int X = 400;
+int Y = 400;
+int J = 1;
+double T = 1;
+int N = std::numeric_limits<int>::max();
 int nb_intermediate_config = 200;
 
 int main()
