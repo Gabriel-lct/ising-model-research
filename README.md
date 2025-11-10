@@ -1,79 +1,163 @@
 # Ising Model Research
 
-A computational physics project exploring different implementations and variations of the Ising model for studying phase transitions and critical phenomena in statistical mechanics.
+Étude computationnelle du modèle d'Ising et des transitions de phase en physique statistique
 
-## Overview
+## 📋 Table des matières
 
-The Ising model is a mathematical model in statistical mechanics that describes ferromagnetism. This project implements various versions of the Ising model to study:
+- [À propos](#à-propos)
+- [Caractéristiques](#caractéristiques)
+- [Structure du projet](#structure-du-projet)
+- [Installation](#installation)
+- [Auteurs](#auteurs)
 
-- **Phase transitions** between ordered (ferromagnetic) and disordered (paramagnetic) states
-- **Critical temperature** and critical exponents
-- **Magnetization dynamics** and equilibrium properties
-- **Monte Carlo simulations** using Metropolis algorithm
-- **Finite-size scaling** effects
+## 🔬 À propos
 
-## Project Structure
+Blablabla Alix est génial.
+
+### Objectifs scientifiques
+
+- Simulation de transitions de phase ferromagnétique/paramagnétique
+- Détermination de la température critique
+- Calcul des exposants critiques
+- Étude de l'équilibration thermodynamique
+- Analyse des effets de taille finie
+
+## ✨ Caractéristiques
+
+- 📊 **Modèles 1D et 2D** avec interactions de plus proches voisins
+- ⚡ **Implémentation C++** haute performance
+- 📈 **Notebooks Python** interactifs pour l'analyse
+- 🎨 **Visualisations** des configurations de spins
+- 💾 **Stockage HDF5** pour les données volumineuses
+
+## 📁 Structure du projet
 
 ```
 ising-model-research/
-├── README.md
-├── requirements.txt
-├── python/
-│   ├── main.py              # Main simulation runner
-│   ├── utils.py             # Utility functions and analysis tools
-│   └── notebooks/           # Jupyter notebooks for visualization and analysis
-└── cpp/                     # C++ implementations for performance-critical simulations
+│
+├── 📄 README.md                  # Ce fichier (mais nan)
+├── 📄 requirements.txt           # Dépendances Python
+├── 📄 .gitignore                 # Fichiers à ignorer
+│
+├── 🐍 python/                    # Code Python
+│   ├── metropolis.ipynb          # Modèle 2D avec Metropolis
+│   ├── modelA.ipynb              # Modèle 1D (chaîne)
+│   └── notebooks/                # Analyses supplémentaires
+│
+├── ⚙️  cpp/                       # Code C++
+│   ├── main.cpp                  # Programme principal
+│   ├── metropolis.cpp/hpp        # Algorithme de Metropolis
+│   ├── utils.cpp/hpp             # Fonctions utilitaires
+│   ├── Makefile                  # Configuration de build
+│   └── build/                    # Binaires compilés
+│
+├── 💾 data/                      # Données de simulation
+│   └── configs.h5                # Configurations au format HDF5
+│
+├── 🎬 animations/                # Sorties de visualisation
+│
+└── 🔧 .vscode/                   # Configuration VS Code
 ```
 
-## Features
+## 🚀 Installation
 
-### Ising Model Variations
+### Prérequis
 
-- **1D Ising Model**: One-dimensional chain with nearest-neighbor interactions
-- **2D Ising Model**: Two-dimensional square lattice (classical model)
+- **Python** 3.8 ou supérieur
+- **C++** compilateur C++11+ (g++, clang++)
+- **HDF5** bibliothèque C++ (libhdf5-dev)
+- **Jupyter** Notebook/Lab (optionnel)
+- **Git** pour cloner le dépôt
 
-### Algorithms
+### Étapes d'installation
 
-- **Metropolis-Hastings Algorithm**: Standard Monte Carlo sampling
-
-### Analysis Tools
-
-- Magnetization and susceptibility calculations
-- Energy and specific heat measurements
-- Correlation functions and correlation length
-- Autocorrelation time analysis
-- Critical exponent estimation
-- Finite-size scaling analysis
-
-## Installation
-
-### Requirements
-
-- Python 3.8+
-- NumPy
-- Matplotlib
-- SciPy
-
-### Setup
-
-1. Clone the repository:
+1. **Cloner le dépôt**
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/votre-username/ising-model-research.git
 cd ising-model-research
 ```
 
-2. Create a virtual environment (recommended):
+2. **Installer la bibliothèque HDF5**
+
+Sur macOS :
 
 ```bash
-python -m venv venv
-source venv/bin/activate  # On macOS/Linux
+brew install hdf5
 ```
 
-3. Install dependencies:
+Sur Linux (Ubuntu/Debian) :
 
 ```bash
+sudo apt-get install libhdf5-dev
+```
+
+3. **Créer un environnement virtuel Python**
+
+```bash
+python3 -m venv venv
+source venv/bin/activate  # macOS/Linux
+```
+
+4. **Installer les dépendances Python**
+
+```bash
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-_Last updated: November 2025_
+5. **Compiler le code C++**
+
+```bash
+cd cpp
+make
+cd ..
+```
+
+> **Note pour les utilisateurs de VS Code** : Si vous utilisez VS Code, ajoutez le chemin d'installation de HDF5 dans le fichier `.vscode/c_cpp_properties.json` :
+>
+> ```json
+> {
+>   "configurations": [
+>     {
+>       "includePath": [
+>         "${workspaceFolder}/**",
+>         "/opt/homebrew/include" // macOS (Apple Silicon)
+>         // ou "/usr/local/include" pour macOS (Intel)
+>         // ou "/usr/include" pour Linux
+>       ]
+>     }
+>   ]
+> }
+> ```
+>
+> Si nécessaire, modifiez également les chemins dans le `Makefile` (section `cpp/`) pour correspondre à votre installation de HDF5.
+
+## 👥 Auteurs
+
+**Luca Bozzzzzìì Mais-nan-dez (a.k.a. Le Chilien)**
+
+- GitHub: [@izzobacul](https://github.com/izzobacul)
+- Email: luca-bozzi@chili-con-carne.com
+
+**Anna Petite (elle n'est pas grande mais on ne lui en veut pas)**
+
+- GitHub: [@annapetit](https://github.com/annapetit)
+- Email: anna-petit@sorbonne.musicologie.trompette-magique.com
+
+**Gaybriel Lancelot (Le premier chevalier homosexuel)**
+
+- GitHub: [@Gabriel-lct](https://github.com/Gabriel-lct)
+- Email: gabriel-lancelot@??.com
+
+## 🙏 Remerciements
+
+- Alxi Delaporte pour la patience de son enseignement.
+
+---
+
+<div align="center">
+
+**[⬆ Retour en haut](#ising-model-research)**
+
+</div>
