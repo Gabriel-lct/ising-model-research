@@ -2,11 +2,11 @@
 #include "utils.hpp"
 #include <iostream>
 
-int X = 400;
-int Y = 400;
+int X = 200;
+int Y = 200;
 int J = 1;
-double T = 1;
-int N = std::numeric_limits<int>::max();
+double T = 0.00001;
+int N = 20000000;
 int nb_intermediate_config = 200;
 
 int main()
@@ -21,5 +21,5 @@ int main()
   double f_E = energy(steps.back(), J);
   std::cout << "Final Config Energy: " << f_E << std::endl;
 
-  save_states(steps, "../data/configs.h5", J, T, N, steps.size());
+  save_states(steps, "../data/antifer-config-froid.h5", J, T, N, steps.size());
 }
