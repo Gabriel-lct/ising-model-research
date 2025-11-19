@@ -2,6 +2,8 @@
 #include <random>
 #include <vector>
 #include <chrono>
+#include <fstream>
+#include <cmath>
 
 using grid = std::vector<std::vector<int>>;
 
@@ -103,16 +105,18 @@ int calc_energy(grid config)
     return errors;
 }
 
-void sudoku(double T, int sN, int it, bool solve)
+std::vector<int> sudoku(double T, int sN, int it, bool solve)
 {
     int N = sN * sN;
     grid conf = init_config(sN);
     print_grid(conf);
     int energy = calc_energy(conf);
+    std::vector<int> energies = {energy};
     std::cout << "Energy: " << energy << std::endl;
     bool announced = false;
     // return 0;
-    for (int i = 0; i < it; i++)
+    int i;
+    for (i = 0; i < it; i++)
     {
         // Change random site
         int x = floor(dist(rng) * N);
@@ -138,6 +142,9 @@ void sudoku(double T, int sN, int it, bool solve)
             std::cout << "Energy < " << N << " in: " << i << " iterations" << std::endl;
             announced = true;
         }
+
+        energies.push_back(energy);
+
         if (solve && energy == 0)
         {
             break;
@@ -146,6 +153,9 @@ void sudoku(double T, int sN, int it, bool solve)
     std::cout << std::endl;
     print_grid(conf);
     std::cout << "Energy: " << energy << std::endl;
+    std::cout << "Iterations: " << i << std::endl;
+
+    return energies;
 }
 
 int main(int argc, char const *argv[])
@@ -165,15 +175,19 @@ int main(int argc, char const *argv[])
     {
         it = std::stoi(argv[3]);
     }
-    bool solve = true;
+    bool solve = false;
+    bool save = true;
     auto start = std::chrono::high_resolution_clock::now();
 
-    sudoku(T, sN, it, solve);
+    std::vector<int> energies = sudoku(T, sN, it, solve);
+
+    std::ofstream out("../data/sudoku/data.bin", std::ios::binary);
+    out.write(reinterpret_cast<char*>(energies.data()),
+    energies.size() * sizeof(int));
 
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> exec = end - start;
     std::cout << "Exec time: " << exec.count() << std::endl;
-    std::cout << "Iterations: " << it << std::endl;
 
     return 0;
 }
