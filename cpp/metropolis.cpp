@@ -18,7 +18,7 @@ void init_configuration(configuration &config)
   }
 }
 
-double energy(const configuration &config, double J)
+double energy(const configuration &config, double J, double B)
 {
   int X = config.size();
   int Y = config[0].size();
@@ -29,14 +29,15 @@ double energy(const configuration &config, double J)
   {
     for (int y = 0; y < Y - 1; y++)
     {
-      E += J * config[x][y] * config[x + 1][y];
-      E += J * config[x][y] * config[x][y + 1];
+      E -= J * config[x][y] * config[x + 1][y];
+      E -= J * config[x][y] * config[x][y + 1];
+      E += B * config[x][y];
     }
   }
   return E;
 }
 
-double delta_energy(const configuration &config, double J, int x, int y)
+double delta_energy(const configuration &config, double J, double B, int x, int y)
 {
   int X = config.size();
   int Y = config[0].size();
@@ -53,10 +54,14 @@ double delta_energy(const configuration &config, double J, int x, int y)
   // Bottom
   sum_neighbors += config[x][(y - 1 + Y) % Y];
 
-  return 2.0 * J * spin * sum_neighbors;
+  sum_neighbors *= J;
+  // Field
+  sum_neighbors -= B;
+
+  return 2.0 * spin * sum_neighbors;
 }
 
-std::vector<configuration> metropolis(configuration config, double J, double T, int nb_iteration, int nb_intermediate_config)
+std::vector<configuration> metropolis(configuration config, double J, double B, double T, int nb_iteration, int nb_intermediate_config)
 {
   int X = config.size();
   int Y = config[0].size();
@@ -79,7 +84,7 @@ std::vector<configuration> metropolis(configuration config, double J, double T, 
     int y = dist_y(rng);
 
     // Calculate the delta energy
-    double d_energy = delta_energy(config, J, x, y);
+    double d_energy = delta_energy(config, J, B, x, y);
     // Define the probability to accept the new state
     double p = exp(-d_energy / T);
 
