@@ -174,7 +174,7 @@ std::vector<float> metropolis_transition(int n, double J, double B, double T_sta
   }
 
   // Save the transitions data
-  save_transitions(C_T, filename, J, B, T_start, T_end, nb_inter_T, nb_metropolis_iteration, n);
+  save_transitions(C_T, filename, T_start, T_end, nb_inter_T, nb_metropolis_iteration, n, J, B);
 
   return C_T;
 }

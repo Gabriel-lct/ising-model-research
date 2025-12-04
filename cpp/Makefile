@@ -17,7 +17,7 @@ LDFLAGS = -L$(HDF5_DIR)/lib -lhdf5_cpp -lhdf5
 BUILD_DIR = build
 
 # Fichiers source
-SRCS = main.cpp metropolis.cpp utils.cpp
+SRCS = main.cpp metropolis.cpp utils.cpp sudoku.cpp sudoku-magnetic.cpp
 
 # Fichiers objets (un par .cpp) dans build/
 OBJS = $(SRCS:%.cpp=$(BUILD_DIR)/%.o)
