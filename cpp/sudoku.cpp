@@ -7,6 +7,7 @@
 #include <chrono>
 #include <fstream>
 #include <cmath>
+#include <omp.h>
 
 using grid = std::vector<std::vector<int>>;
 
@@ -159,14 +160,16 @@ std::pair<std::vector<grid>, std::vector<double>> sudoku(double T, int sN, int m
 std::vector<float> sudoku_transition(int n, double T_start, double T_end, int nb_inter_T, int nb_metropolis_iteration, int nb_data_to_keep, const std::string &filename)
 {
     // Initialize the C_T array
-    std::vector<float> C_T;
-    C_T.reserve(nb_inter_T);
+    std::vector<float> C_T(nb_inter_T);
 
+    // Counter for completed tasks
+    int completed = 0;
+
+// Parallelize the loop over temperatures
+#pragma omp parallel for schedule(dynamic)
     for (int i = 0; i < nb_inter_T; i++)
     {
         float T = T_start + i * (T_end - T_start) / (nb_inter_T - 1);
-        std::cout << "Progress: " << std::fixed << std::setprecision(2)
-                  << (static_cast<double>(i) / nb_inter_T * 100) << "%" << std::endl;
 
         std::vector<double> Es = sudoku(T, n, nb_metropolis_iteration, false).second;
 
@@ -183,7 +186,16 @@ std::vector<float> sudoku_transition(int n, double T_start, double T_end, int nb
         double var_E = mean_double(EsSquare) - mean_double(Es_kept) * mean_double(Es_kept);
         double beta = 1.0 / T;
 
-        C_T.push_back(beta * beta * var_E);
+        C_T[i] = beta * beta * var_E;
+
+        // Increment completed counter and display progress
+#pragma omp critical
+        {
+            completed++;
+            std::cout << "Progress: " << completed << "/" << nb_inter_T
+                      << " (" << std::fixed << std::setprecision(1)
+                      << (static_cast<double>(completed) / nb_inter_T * 100) << "%)" << std::endl;
+        }
     }
 
     // Save the transitions data

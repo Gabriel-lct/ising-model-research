@@ -4,7 +4,8 @@
             "name": "Mac",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/opt/homebrew/opt/hdf5/include"
+                "/opt/homebrew/opt/hdf5/include",
+                "/opt/homebrew/opt/libomp/include"
             ],
             "defines": [],
             "macFrameworkPath": [],

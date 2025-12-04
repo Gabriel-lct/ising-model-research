@@ -20,11 +20,11 @@ int main(int argc, char const *argv[])
 
   auto start = std::chrono::high_resolution_clock::now();
 
-  int sN = 3;
+  int sN = 2;
   double T_start = 0.0001;
   double T_end = 5;
   int nb_inter_T = 8000;
-  int nb_metropolis_iteration = 50000;
+  int nb_metropolis_iteration = 20000;
   int nb_data_to_keep = 1000;
 
   if (argc > 1)
@@ -32,10 +32,10 @@ int main(int argc, char const *argv[])
     sN = std::stoi(argv[1]);
   }
 
-  std::string filename = "../data/sudoku/" + std::to_string(sN * sN) + "-magnetic.h5";
+  std::string filename = "../data/sudoku/" + std::to_string(sN * sN) + "-transition.h5";
 
   std::vector<float>
-      susceptibility = sudoku_magnetic(sN, T_start, T_end, nb_inter_T, nb_metropolis_iteration, nb_data_to_keep, filename);
+      susceptibility = sudoku_transition(sN, T_start, T_end, nb_inter_T, nb_metropolis_iteration, nb_data_to_keep, filename);
 
   auto end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> exec = end - start;

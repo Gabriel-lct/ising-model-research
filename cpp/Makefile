@@ -7,11 +7,14 @@ CXX = clang++
 # Chemin HDF5 (Homebrew)
 HDF5_DIR = /opt/homebrew/opt/hdf5
 
+# Chemin OpenMP (Homebrew)
+OMP_DIR = /opt/homebrew/opt/libomp
+
 # Options de compilation
-CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -I$(HDF5_DIR)/include
+CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -I$(HDF5_DIR)/include -I$(OMP_DIR)/include -Xpreprocessor -fopenmp
 
 # Flags pour HDF5
-LDFLAGS = -L$(HDF5_DIR)/lib -lhdf5_cpp -lhdf5
+LDFLAGS = -L$(HDF5_DIR)/lib -lhdf5_cpp -lhdf5 -L$(OMP_DIR)/lib -lomp
 
 # Dossier pour les fichiers intermédiaires
 BUILD_DIR = build
