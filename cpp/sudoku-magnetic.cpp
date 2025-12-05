@@ -5,6 +5,7 @@
 #include <random>
 #include <iostream>
 #include <iomanip>
+#include <omp.h>
 
 std::vector<int> count_sigma(const grid &config)
 {
@@ -23,16 +24,16 @@ std::vector<int> count_sigma(const grid &config)
 
 std::vector<float> sudoku_magnetic(int n, double T_start, double T_end, int nb_inter_T, int nb_metropolis_iteration, int nb_data_to_keep, const std::string &filename)
 {
-  // Initialize the C_T array
-  std::vector<float> susceptibility;
-  susceptibility.reserve(nb_inter_T);
+  // Initialize the susceptibility array
+  std::vector<float> susceptibility(nb_inter_T);
 
+  // Counter for completed tasks
+  int completed = 0;
+
+#pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < nb_inter_T; i++)
   {
     float T = T_start + i * (T_end - T_start) / (nb_inter_T - 1);
-
-    std::cout << "Progress: " << std::fixed << std::setprecision(2)
-              << (static_cast<double>(i) / nb_inter_T * 100) << "%" << std::endl;
 
     std::vector<grid> sudokus = sudoku(T, n, nb_metropolis_iteration, false).first;
 
@@ -58,18 +59,29 @@ std::vector<float> sudoku_magnetic(int n, double T_start, double T_end, int nb_i
 
     double total_variance = 0.0;
 
-    for (int i = 0; i < n; i++)
+    for (int j = 0; j < n; j++)
     {
-      double avg_N = mean_counts[i] / sudokus_kept.size();
-      double avg_sq_N = mean_sq_counts[i] / sudokus_kept.size();
+      double avg_N = mean_counts[j] / sudokus_kept.size();
+      double avg_sq_N = mean_sq_counts[j] / sudokus_kept.size();
 
       total_variance += avg_sq_N - (avg_N * avg_N);
     }
 
     double chi = total_variance / T;
 
-    susceptibility.push_back(chi);
+    susceptibility[i] = chi;
+
+    // Increment completed counter and display progress
+#pragma omp critical
+    {
+      completed++;
+      std::cout << "Progress: " << completed << "/" << nb_inter_T
+                << " (" << std::fixed << std::setprecision(2)
+                << (static_cast<double>(completed) / nb_inter_T * 100) << "%)" << std::endl;
+    }
   }
   // Save the transitions datas
   save_transitions(susceptibility, filename, T_start, T_end, nb_inter_T, nb_metropolis_iteration, n);
+
+  return susceptibility;
 }

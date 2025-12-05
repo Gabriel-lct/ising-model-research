@@ -3,6 +3,8 @@
 #include <cmath>
 #include <random>
 #include <iostream>
+#include <iomanip>
+#include <omp.h>
 
 // Random generator
 static std::mt19937 rng(std::random_device{}());
@@ -69,7 +71,6 @@ std::vector<configuration> metropolis(configuration config, double J, double B, 
 
   // Create an index to save intermediate config
   int idx = std::floor(nb_iteration / nb_intermediate_config);
-  std::cout << "idx: " << idx << std::endl;
   std::vector<configuration> intermediate_configs;
   intermediate_configs.push_back(config);
 
@@ -145,9 +146,12 @@ std::vector<double> get_energies_metropolis(configuration config, double J, doub
 std::vector<float> metropolis_transition(int n, double J, double B, double T_start, double T_end, int nb_inter_T, int nb_metropolis_iteration, int nb_data_to_keep, const std::string &filename)
 {
   // Initialize the C_T array
-  std::vector<float> C_T;
-  C_T.reserve(nb_inter_T);
+  std::vector<float> C_T(nb_inter_T);
 
+  // Counter for completed tasks
+  int completed = 0;
+
+#pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < nb_inter_T; i++)
   {
     float T = T_start + i * (T_end - T_start) / (nb_inter_T - 1);
@@ -170,11 +174,87 @@ std::vector<float> metropolis_transition(int n, double J, double B, double T_sta
     double var_E = mean_double(EsSquare) - mean_double(Es_kept) * mean_double(Es_kept);
     double beta = 1.0 / T;
 
-    C_T.push_back(beta * beta * var_E);
+    C_T[i] = beta * beta * var_E;
+
+    // Increment completed counter and display progress
+#pragma omp critical
+    {
+      completed++;
+      std::cout << "Progress: " << completed << "/" << nb_inter_T
+                << " (" << std::fixed << std::setprecision(2)
+                << (static_cast<double>(completed) / nb_inter_T * 100) << "%)" << std::endl;
+    }
   }
 
   // Save the transitions data
   save_transitions(C_T, filename, T_start, T_end, nb_inter_T, nb_metropolis_iteration, n, J, B);
 
   return C_T;
+}
+
+std::vector<float> metropolis_sensibility(int n, double J, double B, double T_start, double T_end, int nb_inter_T, int nb_metropolis_iteration, int nb_data_to_keep, const std::string &filename)
+{
+  // Initialize the susceptibility array
+  std::vector<float> susceptibility(nb_inter_T);
+
+  // Counter for completed tasks
+  int completed = 0;
+
+#pragma omp parallel for schedule(dynamic)
+  for (int i = 0; i < nb_inter_T; i++)
+  {
+    float T = T_start + i * (T_end - T_start) / (nb_inter_T - 1);
+
+    configuration config(n, std::vector<int>(n));
+    init_configuration(config);
+
+    // Run metropolis and get all configurations
+    std::vector<configuration> configs = metropolis(config, J, B, T, nb_metropolis_iteration, nb_metropolis_iteration);
+
+    // Garder seulement les nb_data_to_keep dernières configurations (après thermalisation)
+    size_t start_idx = (configs.size() > static_cast<size_t>(nb_data_to_keep)) ? configs.size() - nb_data_to_keep : 0;
+    std::vector<configuration> configs_kept(configs.begin() + start_idx, configs.end());
+
+    // Calculer la magnétisation pour chaque configuration
+    std::vector<double> magnetizations(configs_kept.size());
+    std::vector<double> magnetizations_sq(configs_kept.size());
+
+    for (size_t k = 0; k < configs_kept.size(); ++k)
+    {
+      double M = 0.0;
+      for (const auto &row : configs_kept[k])
+      {
+        for (int spin : row)
+        {
+          M += spin;
+        }
+      }
+      magnetizations[k] = M;
+      magnetizations_sq[k] = M * M;
+    }
+
+    // Calculer la variance de la magnétisation: <M²> - <M>²
+    double mean_M = mean_double(magnetizations);
+    double mean_M_sq = mean_double(magnetizations_sq);
+    double var_M = mean_M_sq - mean_M * mean_M;
+
+    // Susceptibilité magnétique: χ = β * Var(M)
+    double chi = var_M / T;
+
+    susceptibility[i] = chi;
+
+    // Increment completed counter and display progress
+#pragma omp critical
+    {
+      completed++;
+      std::cout << "Progress: " << completed << "/" << nb_inter_T
+                << " (" << std::fixed << std::setprecision(2)
+                << (static_cast<double>(completed) / nb_inter_T * 100) << "%)" << std::endl;
+    }
+  }
+
+  // Save the susceptibility data
+  save_transitions(susceptibility, filename, T_start, T_end, nb_inter_T, nb_metropolis_iteration, n, J, B);
+
+  return susceptibility;
 }

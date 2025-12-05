@@ -193,7 +193,7 @@ std::vector<float> sudoku_transition(int n, double T_start, double T_end, int nb
         {
             completed++;
             std::cout << "Progress: " << completed << "/" << nb_inter_T
-                      << " (" << std::fixed << std::setprecision(1)
+                      << " (" << std::fixed << std::setprecision(2)
                       << (static_cast<double>(completed) / nb_inter_T * 100) << "%)" << std::endl;
         }
     }

@@ -1,5 +1,6 @@
 #define METROPOLIS_HPP
 #include <vector>
+#include <string>
 
 using configuration = std::vector<std::vector<int>>;
 
@@ -20,3 +21,6 @@ std::vector<double> get_energies_metropolis(configuration config, double J, doub
 
 // Calculate heat capacity C_T for phase transition analysis
 std::vector<float> metropolis_transition(int n, double J, double B, double T_start, double T_end, int nb_inter_T, int nb_metropolis_iteration, int nb_data_to_keep, const std::string &filename);
+
+// Calculate magnetic susceptibility for phase transition analysis
+std::vector<float> metropolis_sensibility(int n, double J, double B, double T_start, double T_end, int nb_inter_T, int nb_metropolis_iteration, int nb_data_to_keep, const std::string &filename);
