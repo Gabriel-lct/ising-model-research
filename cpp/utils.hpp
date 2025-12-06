@@ -14,4 +14,4 @@ bool save_states(const std::vector<configuration> &, const std::string filename,
 double mean_double(const std::vector<double> &vec);
 
 // Save phase transition data (C_T values) to HDF5
-bool save_transitions(const std::vector<float> &C_T, const std::string filename, double J, double B, double T_start, double T_end, int nb_inter_T, int nb_metropolis_iteration, int n);
+bool save_transitions(const std::vector<float> &C_T, const std::string filename, double T_start, double T_end, int nb_inter_T, int nb_metropolis_iteration, int n, double J = 0.0, double B = 0.0);

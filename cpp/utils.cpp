@@ -126,7 +126,7 @@ double mean_double(const std::vector<double> &vec)
   return sum / vec.size();
 }
 
-bool save_transitions(const std::vector<float> &C_T, const std::string filename, double J, double B, double T_start, double T_end, int nb_inter_T, int nb_metropolis_iteration, int n)
+bool save_transitions(const std::vector<float> &C_T, const std::string filename, double T_start, double T_end, int nb_inter_T, int nb_metropolis_iteration, int n, double J, double B)
 {
   try
   {
