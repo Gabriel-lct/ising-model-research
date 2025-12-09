@@ -24,3 +24,5 @@ std::vector<float> metropolis_transition(int n, double J, double B, double T_sta
 
 // Calculate magnetic susceptibility for phase transition analysis
 std::vector<float> metropolis_sensibility(int n, double J, double B, double T_start, double T_end, int nb_inter_T, int nb_metropolis_iteration, int nb_data_to_keep, const std::string &filename);
+
+std::vector<double> metropolis_correlation(int n, double J, double B, double T, int nb_iteration, int nb_data_to_keep, const std::string &filename);

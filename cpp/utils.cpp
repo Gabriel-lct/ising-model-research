@@ -194,3 +194,65 @@ bool save_transitions(const std::vector<float> &C_T, const std::string filename,
     return false;
   }
 }
+
+bool save_correlations(const std::vector<double> &correlations, const std::string filename, double T, int nb_metropolis_iteration, int n, double J, double B){
+  try
+  {
+    // Create the file with HDF5
+    H5File file(filename, H5F_ACC_TRUNC);
+
+    if (correlations.empty())
+    {
+      std::cerr << "Nothing to save, correlations is empty" << std::endl;
+      return false;
+    }
+
+    // Save the metadata
+    DataSpace scalar_space(H5S_SCALAR);
+    Group metadata = file.createGroup("/metadata");
+
+    Attribute attr_J = metadata.createAttribute("J", PredType::NATIVE_DOUBLE, scalar_space);
+    attr_J.write(PredType::NATIVE_DOUBLE, &J);
+
+    Attribute attr_B = metadata.createAttribute("B", PredType::NATIVE_DOUBLE, scalar_space);
+    attr_B.write(PredType::NATIVE_DOUBLE, &B);
+
+    Attribute attr_T = metadata.createAttribute("T", PredType::NATIVE_DOUBLE, scalar_space);
+    attr_T.write(PredType::NATIVE_DOUBLE, &T);
+
+    Attribute attr_nb_metropolis_iteration = metadata.createAttribute("nb_metropolis_iteration", PredType::NATIVE_INT, scalar_space);
+    attr_nb_metropolis_iteration.write(PredType::NATIVE_INT, &nb_metropolis_iteration);
+
+    Attribute attr_n = metadata.createAttribute("n", PredType::NATIVE_INT, scalar_space);
+    attr_n.write(PredType::NATIVE_INT, &n);
+
+    // Save correlation data
+    hsize_t dims[1] = {static_cast<hsize_t>(correlations.size())};
+    DataSpace dataspace(1, dims);
+
+    DataSet dataset = file.createDataSet("/correlations", PredType::NATIVE_DOUBLE, dataspace);
+    dataset.write(correlations.data(), PredType::NATIVE_DOUBLE);
+
+    file.close();
+
+    std::cout << "✓ HDF5 backup completed : " << filename << std::endl;
+    std::cout << "  " << correlations.size() << " temperature " << T << std::endl;
+
+    return true;
+  }
+  catch (FileIException &error)
+  {
+    error.printErrorStack();
+    return false;
+  }
+  catch (DataSetIException &error)
+  {
+    error.printErrorStack();
+    return false;
+  }
+  catch (DataSpaceIException &error)
+  {
+    error.printErrorStack();
+    return false;
+  }
+}

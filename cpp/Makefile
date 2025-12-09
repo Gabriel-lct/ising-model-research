@@ -2,19 +2,17 @@
 TARGET = main
 
 # Compilateur
-CXX = clang++
-
-# Chemin HDF5 (Homebrew)
-HDF5_DIR = /opt/homebrew/opt/hdf5
-
-# Chemin OpenMP (Homebrew)
-OMP_DIR = /opt/homebrew/opt/libomp
+CXX = g++
 
 # Options de compilation
-CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -I$(HDF5_DIR)/include -I$(OMP_DIR)/include -Xpreprocessor -fopenmp
+CXXFLAGS = -std=c++17 -Wall -Wextra -O3 -fopenmp
 
-# Flags pour HDF5
-LDFLAGS = -L$(HDF5_DIR)/lib -lhdf5_cpp -lhdf5 -L$(OMP_DIR)/lib -lomp
+# Flags pour HDF5 (utilise pkg-config pour trouver automatiquement les chemins)
+HDF5_CFLAGS = $(shell pkg-config --cflags hdf5)
+HDF5_LIBS = $(shell pkg-config --libs hdf5)
+
+# Flags de linkage
+LDFLAGS = $(HDF5_LIBS) -lhdf5_cpp -fopenmp
 
 # Dossier pour les fichiers intermédiaires
 BUILD_DIR = build
@@ -31,7 +29,7 @@ $(TARGET): $(OBJS)
 
 # Compilation de chaque fichier .cpp
 $(BUILD_DIR)/%.o: %.cpp | $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(HDF5_CFLAGS) -c $< -o $@
 
 # Créer le dossier build s'il n'existe pas
 $(BUILD_DIR):
@@ -44,3 +42,5 @@ clean:
 # Cible pratique
 run: $(TARGET)
 	./$(TARGET)
+
+.PHONY: clean run

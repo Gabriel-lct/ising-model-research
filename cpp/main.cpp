@@ -9,7 +9,7 @@ int main(int argc, char const *argv[])
 {
   auto start = std::chrono::high_resolution_clock::now();
   // Paramètres pour l'analyse de transition de phase de metropolis
-  int n = 30;                           // Taille grille
+  int n = 20;                           // Taille grille
   double J = 1.0;                       // Coupling constant
   double B = 0.0;                       // Magnetic field
   double T_start = 0.001;               // Température initiale
@@ -17,6 +17,10 @@ int main(int argc, char const *argv[])
   int nb_inter_T = 20000;               // Nombre de points de température
   int nb_metropolis_iteration = 500000; // Nombre d'itérations Metropolis par température
   int nb_data_to_keep = 10000;
+  double T = 4;
+
+  metropolis_correlation(n, J, B, T, 100000, 1000, "../data/metropolis/correlation/T"+std::to_string((int)T)+"n"+std::to_string(n)+".h5");
+  return 0;
   std::string state;
   if (J > 0)
   {

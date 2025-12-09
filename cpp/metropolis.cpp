@@ -258,3 +258,37 @@ std::vector<float> metropolis_sensibility(int n, double J, double B, double T_st
 
   return susceptibility;
 }
+
+std::vector<double> metropolis_correlation(int n, double J, double B, double T, int nb_iteration, int nb_data_to_keep, const std::string &filename){
+  configuration config(n, std::vector<int>(n));
+  init_configuration(config);
+  std::cout << "Starting metropolis" << std::endl;
+  std::vector<configuration> configs = metropolis(config, J, B, T, nb_iteration, nb_iteration);
+  std::cout << "Metropolis done" << std::endl;
+  std::cout << "Computing correlations" << std::endl;
+  std::vector<double> correlations = std::vector<double>(2*n-1);
+  std::vector<double> count = std::vector<double>(2*n-1);
+  for (int i=nb_iteration-nb_data_to_keep; i < nb_iteration; i++){
+    configuration conf = configs[i];
+    for (int y1 = 0; y1 < n; y1++){
+      for (int x1=0; x1 < n; x1++){
+        int spin = conf[y1][x1];
+        for (int y2 = y1; y2 < n; y2++){
+          for (int x2 = y2; x2 < n; x2++){
+            int dist = abs((x2-x1)) + abs((y2-y1));
+            correlations[dist] += spin*conf[y2][x2];
+            count[dist] ++;
+          }
+        }
+      }
+    }
+  }
+  for (int i=0; i<2*n-1; i++){
+    correlations[i] /= count[i];
+    std::cout << correlations[i] << std::endl;
+  }
+
+  save_correlations(correlations, filename, T, nb_iteration, n, J, B);
+
+  return correlations;
+}
