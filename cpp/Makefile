@@ -4,15 +4,19 @@ TARGET = main
 # Compilateur
 CXX = g++
 
+# OpenMP flags for macOS (Homebrew libomp)
+OPENMP_CFLAGS = -Xpreprocessor -fopenmp -I$(shell brew --prefix libomp)/include
+OPENMP_LIBS = -L$(shell brew --prefix libomp)/lib -lomp
+
 # Options de compilation
-CXXFLAGS = -std=c++17 -Wall -Wextra -O3 -fopenmp
+CXXFLAGS = -std=c++17 -Wall -Wextra -O3 $(OPENMP_CFLAGS)
 
 # Flags pour HDF5 (utilise pkg-config pour trouver automatiquement les chemins)
 HDF5_CFLAGS = $(shell pkg-config --cflags hdf5)
 HDF5_LIBS = $(shell pkg-config --libs hdf5)
 
 # Flags de linkage
-LDFLAGS = $(HDF5_LIBS) -lhdf5_cpp -fopenmp
+LDFLAGS = $(HDF5_LIBS) -lhdf5_cpp $(OPENMP_LIBS)
 
 # Dossier pour les fichiers intermédiaires
 BUILD_DIR = build
