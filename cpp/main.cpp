@@ -9,6 +9,7 @@ int main(int argc, char const *argv[])
 {
   auto start = std::chrono::high_resolution_clock::now();
   // Paramètres pour l'analyse de transition de phase de metropolis
+<<<<<<< HEAD
   // int n = 20;                           // Taille grille
   // double J = 1.0;                       // Coupling constant
   // double B = 0.0;                       // Magnetic field
@@ -33,20 +34,56 @@ int main(int argc, char const *argv[])
   // std::string filename = "../data/metropolis/" + state + "transition/" + std::to_string(n) + "-config.h5";
 
   // metropolis_transition(n, J, B, T_start, T_end, nb_inter_T, nb_metropolis_iteration, nb_data_to_keep, filename);
+=======
+  /* int n = 20;                           // Taille grille
+  double J = 1.0;                       // Coupling constant
+  double B = 0.0;                       // Magnetic field
+  double T_start = 0.001;               // Température initiale
+  double T_end = 15.0;                  // Température finale
+  int nb_inter_T = 20000;               // Nombre de points de température
+  int nb_metropolis_iteration = 500000; // Nombre d'itérations Metropolis par température
+  int nb_data_to_keep = 10000;
+  double T = 4; */
 
+  /*   metropolis_correlation(n, J, B, T, 100000, 1000, "../data/metropolis/correlation/T"+std::to_string((int)T)+"n"+std::to_string(n)+".h5");
+    return 0;
+    std::string state;
+    if (J > 0)
+    {
+      state = "fer/";
+    }
+    else
+    {
+      state = "antifer/";
+    }
+    std::string filename = "../data/metropolis/" + state + "transition/" + std::to_string(n) + "-config.h5";
+>>>>>>> 1c4890f21dffe55750d8989ba98818d0904426e3
+
+    metropolis_transition(n, J, B, T_start, T_end, nb_inter_T, nb_metropolis_iteration, nb_data_to_keep, filename);
+   */
   // Code pour l'analyse de transition de phase de sudoku
+<<<<<<< HEAD
   // int sN = 3;
   // double T_start = 0.00001;
   // double T_end = 1;
   // int nb_inter_T = 20000;
   // int nb_metropolis_iteration = 40000;
   // int nb_data_to_keep = 8000;
+=======
+  int sN = 5;
+  double T_start = 0.00001;
+  double T_end = 1;
+  int nb_inter_T = 5000;
+  int nb_metropolis_iteration = 100000;
+  int nb_data_to_keep = 20000;
+>>>>>>> 1c4890f21dffe55750d8989ba98818d0904426e3
 
   // if (argc > 1)   
   // {
   //   sN = std::stoi(argv[1]);
   // }
 
+<<<<<<< HEAD
   // std::string filename = "../data/sudoku/" + std::to_string(sN * sN) + "-transition-gigazoom.h5";
 
   // std::vector<float>
@@ -54,6 +91,13 @@ int main(int argc, char const *argv[])
   
   sudoku_transition()
 
+=======
+  std::string filename = "../data/sudoku/" + std::to_string(sN * sN) + "-magnetic.h5";
+
+  std::vector<float>
+      susceptibility = sudoku_magnetic(sN, T_start, T_end, nb_inter_T, nb_metropolis_iteration, nb_data_to_keep, filename);
+
+>>>>>>> 1c4890f21dffe55750d8989ba98818d0904426e3
   auto end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> exec = end - start;
   std::cout << "Exec time: " << exec.count() << std::endl;
